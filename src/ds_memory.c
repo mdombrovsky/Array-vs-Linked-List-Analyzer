@@ -4,18 +4,95 @@
  * Course: CIS*2520
  */
 
-struct ds_file_struct ds_file;
 
+#include "../includes/ds_memory.h"
+
+/*Global variables*/
+struct ds_file_struct ds_file;
 struct ds_counts_struct ds_counts;
 
-int ds_create( char *filename, long size );
 
-int ds_init( char *filename );
+int ds_create( char *filename, long size ){
 
-long ds_malloc( long amount );
+    int i;
 
-void ds_free( long start ) ;
+    struct ds_blocks_struct block;
+    struct ds_blocks_struct blockArray [MAX_BLOCKS];
 
-void *ds_read( void *ptr, long start, long bytes ); 
+    char zero=0;
 
-int ds_finish();
+    FILE * fptr;
+
+    block.start=0;
+    block.length=size;
+    block.alloced=0;
+
+    /*Populates blocks*/
+    for(i=0;i<MAX_BLOCKS;i++)
+    {
+        blockArray[i].start=block.start;
+        blockArray[i].length=block.length;
+        blockArray[i].alloced=block.alloced;
+
+        if(block.length!=0)
+            block.length=0;        
+    }
+
+    /*Opens file*/
+    fptr=fopen(filename,"wb");
+
+    if(fptr==NULL)
+    {
+        /*Error opening file*/
+        return 1;
+    }
+
+    if(fwrite(blockArray,sizeof(blockArray[0]),MAX_BLOCKS,fptr)!=MAX_BLOCKS)
+    {
+        /*Error writing files*/
+        return 2;
+    }
+
+    if(fwrite(&zero,sizeof(zero),size,fptr)!=size){
+        /*Error writing files*/
+        return 2;
+    }
+
+    if(fclose(fptr)!=0)
+    {
+        /*Error closing file*/
+        return 3;
+    }
+
+    return 0;
+}
+
+int ds_init( char *filename ){
+
+    ds_file.fp=fopen(filename,"rb");
+
+    ds_counts.reads=0;
+    ds_counts.writes=0;
+
+    if(ds_file.fp==NULL)
+    {
+        /*Error opening file*/
+        return 1;
+    }
+
+    if(fread(ds_file.block,MAX_BLOCKS,sizeof(ds_file.block[0]),ds_file.fp)!=MAX_BLOCKS)
+    {
+        /*Error reading from file*/
+        return 2;
+    }
+    
+    if(fclose(ds_file.fp)!=0)
+    {
+        /*Error closing file*/
+        return 3;
+    }
+    
+
+    return 0;
+
+}
