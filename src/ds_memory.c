@@ -174,7 +174,7 @@ void *ds_read( void *ptr, long start, long bytes ){
     }
 
     /*Accounts for header*/
-    if( fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
+    if(fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
     {
         /*Error rewinding file*/
         return NULL;
@@ -192,4 +192,48 @@ void *ds_read( void *ptr, long start, long bytes ){
 
     /*FIX_ME IS THIS RIGHT???????*/
     return ptr;
+}
+
+long ds_write( long start, void *ptr, long bytes ){
+    
+    if(fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
+    {
+        /*Error rewinding file*/
+        return -1;
+    }
+
+    if(fwrite(ptr,bytes,1,ds_file.fp)!=1)
+    {
+        /*Error writing file*/
+        return -1;
+    }
+
+    ds_counts.writes++;
+
+    return start;
+}
+
+int ds_finish(){
+    
+    if(fseek(ds_file.fp,0,SEEK_SET)!=0)
+    {
+        /*Error rewinding file*/
+        return 0;
+    }
+
+    if(fwrite(ds_file.block,sizeof(ds_file.block[0]),MAX_BLOCKS,ds_file.fp)!=MAX_BLOCKS)
+    {
+        /*Error writing file*/
+        return 0;
+    }
+
+    if(fclose(ds_file.fp)!=0)
+    {
+        /*Error closing file*/
+        return 0;
+    }
+
+    printf("reads: %d\nwrites: %d\n",ds_counts.reads,ds_counts.writes);
+
+    return 1;
 }
