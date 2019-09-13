@@ -136,3 +136,22 @@ long ds_malloc( long amount ){
     return ds_file.block[i].start;
 
 }
+
+void ds_free( long start ){
+
+    int i;
+    
+    int found=0;
+
+    /*Search through block array*/
+    for(i=0;i<MAX_BLOCKS&&!found;i++)
+    {
+        if(ds_file.block[i].start==start)
+        {
+            ds_file.block[i].alloced=0;
+            found=1;
+        }
+    }
+
+    return;
+}
