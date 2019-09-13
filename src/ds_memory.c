@@ -49,7 +49,7 @@ int ds_create( char *filename, long size ){
 
     if(fwrite(blockArray,sizeof(blockArray[0]),MAX_BLOCKS,fptr)!=MAX_BLOCKS)
     {
-        /*Error writing files*/
+        /*Error writing file*/
         return 2;
     }
 
@@ -69,6 +69,15 @@ int ds_create( char *filename, long size ){
 
 int ds_init( char *filename ){
 
+    if(ds_file.fp!=NULL)
+    {
+        if(fclose(ds_file.fp)!=0)
+        {
+            /*Error with incoming file pointer*/
+            return 4;
+        }
+    }
+    
     ds_file.fp=fopen(filename,"rb");
 
     ds_counts.reads=0;
@@ -154,4 +163,33 @@ void ds_free( long start ){
     }
 
     return;
+}
+
+void *ds_read( void *ptr, long start, long bytes ){
+    
+    if(ds_file.fp==NULL)
+    {
+        /*Error opening file*/
+        return NULL;
+    }
+
+    /*Accounts for header*/
+    if( fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
+    {
+        /*Error rewinding file*/
+        return NULL;
+    }
+
+    /*Reads data*/
+    if(fread(ptr,bytes,1,ds_file.fp)!=1)
+    {
+        /*Error reading file*/
+        return NULL;
+    }
+
+    /*Increments reads*/
+    ds_counts.reads++;
+
+    /*FIX_ME IS THIS RIGHT???????*/
+    return ptr;
 }
