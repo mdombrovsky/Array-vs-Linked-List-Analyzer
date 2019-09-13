@@ -92,7 +92,47 @@ int ds_init( char *filename ){
         return 3;
     }
     
-
     return 0;
+}
+
+long ds_malloc( long amount ){
+
+    int i,j;
+
+    int found=0;
+
+
+    /*Search through blocks for empty block*/
+    for(i=0;i<MAX_BLOCKS&&!found;i++)
+    {
+        if(ds_file.block[i].length>=amount && ds_file.block[i].alloced==0)
+        {
+            ds_file.block[i].length=amount;
+            ds_file.block[i].alloced=1;
+            found=1;
+            
+        }
+    }
+
+    if(!found)
+    {
+        /*If no blocks are found*/
+        return -1;
+    }
+    
+    /*Search for second block*/
+    found=0;
+    for(j=0;j<MAX_BLOCKS&&!found;j++)
+    {
+        if(ds_file.block[j].length==0)
+        {
+            ds_file.block[j].start=ds_file.block[i].start+amount;
+            ds_file.block[j].length=ds_file.block[i].length-amount;
+            ds_file.block[j].alloced=0;
+            found=1;
+        }
+    }
+
+    return ds_file.block[i].start;
 
 }

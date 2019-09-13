@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -ansi -g -Iincludes
+CFLAGS=-Wall -ansi -g -Iincludes -pedantic
 
 
 ds_memory.o: src/ds_memory.c includes/ds_memory.h
