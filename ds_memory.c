@@ -5,7 +5,7 @@
  */
 
 
-#include "../includes/ds_memory.h"
+#include "ds_memory.h"
 
 /*Global variables*/
 struct ds_file_struct ds_file;

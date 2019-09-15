@@ -1,15 +1,23 @@
 CC=gcc
-CFLAGS=-Wall -ansi -g -Iincludes -pedantic
+CFLAGS=-Wall -ansi -g -pedantic
 
 
-ds_memory.o: src/ds_memory.c includes/ds_memory.h
-	$(CC) $(CFLAGS) -c src/ds_memory.c -o bin/ds_memory.o
+ds_memory.o: ds_memory.c ds_memory.h
+	$(CC) $(CFLAGS) -c ds_memory.c -o ds_memory.o
 
-ds_list.o: src/ds_list.c includes/ds_list.h
-	$(CC) $(CFLAGS) -c src/ds_list.c -o bin/ds_list.o
+ds_list.o: ds_list.c ds_list.h
+	$(CC) $(CFLAGS) -c ds_list.c -o ds_list.o
 	
-ds_array.o: src/ds_array.c includes/ds_array.h
-	$(CC) $(CFLAGS) -c src/ds_array.c -o bin/ds_array.o
+ds_array.o: ds_array.c ds_array.h
+	$(CC) $(CFLAGS) -c ds_array.c -o ds_array.o
 
-clean:
-	rm bin/*
+test: ds_memory.o ds_list.o ds_array.o test.o
+	$(CC) $(CFLAGS) test.o ds_array.o ds_list.o ds_memory.o -o test
+	./test
+
+test_memory: ds_memory.o test.o ds_memory.h
+	$(CC) $(CFLAGS) test.o ds_memory.o -o test_memory
+	./test_memory
+
+test.o: test.c
+	$(CC) $(CFLAGS) -c test.c -o test.o
