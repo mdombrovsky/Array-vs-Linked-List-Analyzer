@@ -11,13 +11,14 @@ ds_list.o: ds_list.c ds_list.h
 ds_array.o: ds_array.c ds_array.h
 	$(CC) $(CFLAGS) -c ds_array.c -o ds_array.o
 
-test: ds_memory.o ds_list.o ds_array.o test.o
-	$(CC) $(CFLAGS) test.o ds_array.o ds_list.o ds_memory.o -o test
+test: ds_memory.o test.o ds_memory.h
+	$(CC) $(CFLAGS) test.o ds_memory.o -o test
 	./test
-
-test_memory: ds_memory.o test.o ds_memory.h
-	$(CC) $(CFLAGS) test.o ds_memory.o -o test_memory
-	./test_memory
 
 test.o: test.c
 	$(CC) $(CFLAGS) -c test.c -o test.o
+
+clean_test:
+	rm -i *.o
+	rm -i test
+	rm -i test.bin

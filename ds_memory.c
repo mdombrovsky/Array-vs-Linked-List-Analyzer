@@ -89,11 +89,12 @@ int ds_init( char *filename ){
         return 1;
     }
 
-    if(fread(ds_file.block,MAX_BLOCKS,sizeof(ds_file.block[0]),ds_file.fp)!=MAX_BLOCKS)
+   if(fread(ds_file.block,sizeof(ds_file.block[0]),MAX_BLOCKS,ds_file.fp)!=MAX_BLOCKS)
     {
         /*Error reading from file*/
         return 2;
     }
+    
     
     if(fclose(ds_file.fp)!=0)
     {
@@ -236,4 +237,13 @@ int ds_finish(){
     printf("reads: %d\nwrites: %d\n",ds_counts.reads,ds_counts.writes);
 
     return 1;
+}
+
+void ds_test_init(){
+    int i;
+    printf("Block #\tstart\tlength\talloced\n");
+    for(i=0;i<MAX_BLOCKS&&i<10;i++)
+        printf("%d\t%ld\t%ld\t%d\n",i,ds_file.block[i].start,ds_file.block[i].length,ds_file.block[i].alloced);
+
+    printf("read=%d\nwrite=%d\n",ds_counts.reads,ds_counts.writes);
 }

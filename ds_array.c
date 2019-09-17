@@ -8,7 +8,7 @@
 long elements;
 
 
-int ds_create_array(){
+/*int ds_create_array(){
 
     int error;
 
@@ -36,4 +36,4 @@ int ds_create_array(){
         return error+40;
 
     return(0);
-}
+}*/
