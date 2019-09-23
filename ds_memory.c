@@ -78,7 +78,7 @@ int ds_init( char *filename ){
         }
     }
     
-    ds_file.fp=fopen(filename,"rb");
+    ds_file.fp=fopen(filename,"rb+");
 
     ds_counts.reads=0;
     ds_counts.writes=0;
@@ -96,12 +96,6 @@ int ds_init( char *filename ){
     }
     
     
-    if(fclose(ds_file.fp)!=0)
-    {
-        /*Error closing file*/
-        return 3;
-    }
-    
     return 0;
 }
 
@@ -111,19 +105,24 @@ long ds_malloc( long amount ){
 
     int found=0;
 
+    int original;
 
     /*Search through blocks for empty block*/
-    for(i=0;i<MAX_BLOCKS&&!found;i++)
+    for(i=0;i<MAX_BLOCKS&&found==0;i++)
     {
         if(ds_file.block[i].length>=amount && ds_file.block[i].alloced==0)
         {
+            original=ds_file.block[i].length;
             ds_file.block[i].length=amount;
             ds_file.block[i].alloced=1;
             found=1;
             
         }
+        
+      
     }
-
+    i--;
+  
     if(!found)
     {
         /*If no blocks are found*/
@@ -137,7 +136,7 @@ long ds_malloc( long amount ){
         if(ds_file.block[j].length==0)
         {
             ds_file.block[j].start=ds_file.block[i].start+amount;
-            ds_file.block[j].length=ds_file.block[i].length-amount;
+            ds_file.block[j].length=original-amount;
             ds_file.block[j].alloced=0;
             found=1;
         }
@@ -216,6 +215,12 @@ long ds_write( long start, void *ptr, long bytes ){
 
 int ds_finish(){
     
+    if(ds_file.fp==NULL)
+    {
+        /*Error with file pointer*/
+        return 0;
+    }
+
     if(fseek(ds_file.fp,0,SEEK_SET)!=0)
     {
         /*Error rewinding file*/
@@ -242,8 +247,8 @@ int ds_finish(){
 void ds_test_init(){
     int i;
     printf("Block #\tstart\tlength\talloced\n");
-    for(i=0;i<MAX_BLOCKS&&i<10;i++)
+    for(i=0;i<MAX_BLOCKS&&i<16;i++)
         printf("%d\t%ld\t%ld\t%d\n",i,ds_file.block[i].start,ds_file.block[i].length,ds_file.block[i].alloced);
 
-    printf("read=%d\nwrite=%d\n",ds_counts.reads,ds_counts.writes);
+    printf("read = %d\nwrite = %d\n",ds_counts.reads,ds_counts.writes);
 }
