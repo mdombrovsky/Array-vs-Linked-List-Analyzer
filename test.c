@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "ds_memory.h"
+#include "ds_array.h"
  
 
 
@@ -214,7 +215,7 @@ int main(void){
 
        ds_test_init();
 
-       ds_finish();*/
+       ds_finish();
 
        unsigned char c1;
 
@@ -231,8 +232,6 @@ int main(void){
  
 
        long memory[6] = { 0, 2, 6, 14, 10, 30};
-
-       /* values copied from output of ds_write */
 
        
 
@@ -258,10 +257,17 @@ int main(void){
 
        
 
-       ds_finish();
+       ds_finish();*/
+
+       int ds_create_return=ds_create("array.bin",2048);
+       int ds_create_array_return=ds_create_array();
+
+       ds_test_init();
+
+       int ds_finish_return=ds_finish();
+       
+       printf("\nds_create: %d\nds_create_array: %d\nds_finish: %d",ds_create_return,ds_create_array_return,ds_finish_return);
 
        
-
-
        return 0;
 }
