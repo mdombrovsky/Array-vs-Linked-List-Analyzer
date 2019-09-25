@@ -139,7 +139,7 @@ int ds_insert( int value, long index ){
     {
         /*If index is non-empty*/
         /*Read value into temp*/
-        if(ds_read(&temp,get_index_start(index),sizeof(value))==NULL)
+        if(read_int_in_array(&temp,(index))==NULL)
         {
             return 30;  
         }    
@@ -183,7 +183,7 @@ int ds_delete( long index ){
     else
     {
        
-        if(ds_read(&temp,get_index_start(index+1),sizeof(int))==NULL)
+        if(read_int_in_array(&temp,(index+1))==NULL)
             return 10;
         
         error= ds_replace(temp,index);
@@ -225,10 +225,10 @@ int ds_swap( long index1, long index2 ){
         return 20;
 
     /*Gets value 1*/
-    if(ds_read(&value1,get_index_start(index1),sizeof(int))==NULL)
+    if(read_int_in_array(&value1,(index1))==NULL)
         return 30;
 
-    if(ds_read(&value2,get_index_start(index2),sizeof(int))==NULL)
+    if(read_int_in_array(&value2,(index2))==NULL)
         return 40;
 
     /*Puts value 1 into index 2*/
@@ -243,13 +243,79 @@ int ds_swap( long index1, long index2 ){
 
     return 0;
 }
-/*
+
+/**
+ * Searches the array for an element
+ * 
+ * Return values:
+ *      index -- Success
+ *      -1 -- Failure
+ **/
 long ds_find( int target ){
+    int i;
+    int temp;
+
+    for(i=0;i<elements;i++)
+    {
+        read_int_in_array(&temp, i);
+        if(target==temp)
+            return i;
+    }
+    return -1;
+}
+
+/**
+ * Reads elements from text file and puts them into array
+ * 
+ * Return values:
+ *      0 -- Success
+ *      10 -- Error opening file
+ *      20 -- Too many elements in file
+ *      3X -- Error inserting file
+ **/ 
+int ds_read_elements( char *filename ){
+    FILE *fptr;
+    int temp;
+    int error;    
+    /*Opens file*/
+    fptr=fopen(filename,"r");
+
+    if(fptr==NULL)
+    {
+        /*Error opening file*/
+        return 10;
+    }
+   
+    do{
+        /*Reads from file*/
+        error=fscanf(fptr, "%d", &temp);
+
+        /*If one element is read in*/
+        if(error==1){
+
+            /*If array is already full*/
+            if(elements==MAX_ELEMENTS)
+            {
+                return 20;
+            }
+
+            /*Insert element into end of array*/
+            error=ds_insert(temp,elements);
+
+            /*If there is error with ds_insert*/
+            if(error!=0)
+            {
+                return error+30;
+            }
+        }
+
+    }while(error!=EOF);
+
+    return 0;
+    
+
 
 }
-int ds_read_elements( char *filename ){
-
-}*/
 
 int ds_finish_array(){
     int error;
@@ -265,9 +331,28 @@ int ds_finish_array(){
     return 0;
 }
 
+/**
+ * Calculates the index with which do call ds_read
+ * 
+ * Return values:
+ *      long -- Correct index with which to call ds_read
+ *      
+ **/
 long get_index_start(int index){
     return sizeof(elements)+(index)*sizeof(int);
 }
+
+/**
+ * Reads array elements from the file
+ * 
+ * Return values:
+ *      ptr -- Success
+ *      NULL -- Failure
+ **/ 
+void* read_int_in_array(void *ptr, long index){
+    return ds_read(ptr, get_index_start(index),sizeof(int));
+}
+
 void show_array(){
     int i;
     ds_init_array();

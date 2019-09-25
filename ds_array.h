@@ -20,4 +20,5 @@ long ds_find( int target );
 int ds_read_elements( char *filename ); 
 int ds_finish_array(); 
 long get_index_start(int index);
+void* read_int_in_array(void *ptr, long index);
 void show_array();
