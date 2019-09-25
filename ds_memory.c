@@ -11,7 +11,16 @@
 struct ds_file_struct ds_file;
 struct ds_counts_struct ds_counts;
 
-
+/**
+ * Create initial header and writes it to file
+ * 
+ * Return values:
+ *      0 -- Success
+ *      1 -- Error opening file
+ *      2 -- Error writing to file
+ *      3 -- Error closing file
+ *      4 -- Invalid size
+ **/ 
 int ds_create( char *filename, long size ){
 
     int i;
@@ -22,6 +31,9 @@ int ds_create( char *filename, long size ){
     char zero=0;
 
     FILE * fptr;
+
+    if(size<0)
+        return 4;
 
     block.start=0;
     block.length=size;
@@ -67,6 +79,15 @@ int ds_create( char *filename, long size ){
     return 0;
 }
 
+/**
+ * Initializes global variables
+ * 
+ * Return values:
+ *      0 -- Success
+ *      1 -- Error opening file
+ *      2 -- Error reading from file
+ *      3 -- Error closing non-NULL file pointer
+ **/
 int ds_init( char *filename ){
 
     if(ds_file.fp!=NULL)
@@ -74,7 +95,7 @@ int ds_init( char *filename ){
         if(fclose(ds_file.fp)!=0)
         {
             /*Error with incoming file pointer*/
-            return 4;
+            return 3;
         }
     }
     
@@ -99,6 +120,13 @@ int ds_init( char *filename ){
     return 0;
 }
 
+/**
+ * Allocates space in the header
+ * 
+ * Return values:
+ *      block start location -- Success
+ *      -1 -- Failure (no blocks availible) 
+ **/
 long ds_malloc( long amount ){
 
     int i,j;
@@ -106,6 +134,11 @@ long ds_malloc( long amount ){
     int found=0;
 
     int original;
+
+    if(amount<0)
+    {
+        return -1;
+    }
 
     /*Search through blocks for empty block*/
     for(i=0;i<MAX_BLOCKS&&found==0;i++)
@@ -117,8 +150,7 @@ long ds_malloc( long amount ){
             ds_file.block[i].alloced=1;
             found=1;
             
-        }
-        
+        }        
       
     }
     i--;
@@ -146,6 +178,12 @@ long ds_malloc( long amount ){
 
 }
 
+/**
+ * Frees a block
+ * 
+ * Return values:
+ *      N/A
+ */ 
 void ds_free( long start ){
 
     int i;
@@ -165,7 +203,19 @@ void ds_free( long start ){
     return;
 }
 
+/**
+ * Reads from the file
+ * 
+ * Return values:
+ *      ptr -- Success
+ *      NULL -- Failure
+ **/ 
 void *ds_read( void *ptr, long start, long bytes ){
+    
+    if(start<0)
+    {
+        return NULL;
+    }
     
     if(ds_file.fp==NULL)
     {
@@ -194,8 +244,20 @@ void *ds_read( void *ptr, long start, long bytes ){
     return ptr;
 }
 
+/**
+ * Writes to file
+ * 
+ * Return values:
+ *      start -- Success
+ *      -1 -- Failure
+ **/
 long ds_write( long start, void *ptr, long bytes ){
     
+    if(start<0)
+    {
+        return -1;
+    }
+
     if(fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
     {
         /*Error rewinding file*/
@@ -213,6 +275,13 @@ long ds_write( long start, void *ptr, long bytes ){
     return start;
 }
 
+/**
+ * Writes the new header to file
+ * 
+ * Return values:
+ *      1 -- Success
+ *      0 -- Failure
+ **/
 int ds_finish(){
     
     if(ds_file.fp==NULL)
@@ -229,18 +298,35 @@ int ds_finish(){
 
     if(fwrite(ds_file.block,sizeof(ds_file.block[0]),MAX_BLOCKS,ds_file.fp)!=MAX_BLOCKS)
     {
+
         /*Error writing file*/
         return 0;
     }
 
     if(fclose(ds_file.fp)!=0)
     {
-        /*Error closing file*/
+       /*Error closing file*/
         return 0;
     }
 
     printf("reads: %d\nwrites: %d\n",ds_counts.reads,ds_counts.writes);
 
+    return 1;
+}
+
+/**
+ * Returns if an element has been alloced
+ * 
+ * Return values:
+ *      0 -- Not alloced
+ *      1 -- Alloced
+ **/
+int is_alloced(long start){
+    int i;
+
+    for(i=0;i<MAX_BLOCKS;i++)
+        if(ds_file.block[i].start==(start+sizeof(ds_file.block)))
+            return (int)ds_file.block[i].alloced;
     return 1;
 }
 

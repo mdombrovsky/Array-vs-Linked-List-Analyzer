@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX_ELEMENTS 256
+
 
 /*Function Definitions*/
 int ds_create_array();
@@ -19,3 +19,5 @@ int ds_swap( long index1, long index2 );
 long ds_find( int target ); 
 int ds_read_elements( char *filename ); 
 int ds_finish_array(); 
+long get_index_start(int index);
+void show_array();

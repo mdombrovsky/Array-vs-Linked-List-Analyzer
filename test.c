@@ -258,15 +258,12 @@ int main(void){
        
 
        ds_finish();*/
-
-       int ds_create_return=ds_create("array.bin",2048);
-       int ds_create_array_return=ds_create_array();
-
-       ds_test_init();
-
-       int ds_finish_return=ds_finish();
-       
-       printf("\nds_create: %d\nds_create_array: %d\nds_finish: %d",ds_create_return,ds_create_array_return,ds_finish_return);
+   
+       int a,b;
+       a=ds_init_array();
+       show_array();
+       b=ds_finish_array();
+       printf("inti_Array:%d\nfinish_array:%d",a,b);
 
        
        return 0;
