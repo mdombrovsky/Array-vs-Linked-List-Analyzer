@@ -86,19 +86,10 @@ int ds_create( char *filename, long size ){
  *      0 -- Success
  *      1 -- Error opening file
  *      2 -- Error reading from file
- *      3 -- Error closing non-NULL file pointer
  **/
 int ds_init( char *filename ){
 
-    if(ds_file.fp!=NULL)
-    {
-        if(fclose(ds_file.fp)!=0)
-        {
-            /*Error with incoming file pointer*/
-            return 3;
-        }
-    }
-    
+   
     ds_file.fp=fopen(filename,"rb+");
 
     ds_counts.reads=0;
@@ -266,6 +257,7 @@ long ds_write( long start, void *ptr, long bytes ){
 
     if(fwrite(ptr,bytes,1,ds_file.fp)!=1)
     {
+        
         /*Error writing file*/
         return -1;
     }
@@ -337,4 +329,8 @@ void ds_test_init(){
         printf("%d\t%ld\t%ld\t%d\n",i,ds_file.block[i].start,ds_file.block[i].length,ds_file.block[i].alloced);
 
     printf("read = %d\nwrite = %d\n",ds_counts.reads,ds_counts.writes);
+}
+
+void decrease_reads(){
+    ds_counts.reads--;
 }

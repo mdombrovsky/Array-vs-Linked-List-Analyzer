@@ -11,16 +11,27 @@ long elements;
 
 #define MAX_ELEMENTS 256
 
+/**
+ * Allocates space for the array
+ * 
+ * Return values:
+ *      0 -- Success
+ *      1X -- Initialization error
+ *      20 -- Error allocating memory
+ *      30 -- Error allocating memory
+ *      40 -- Error writing
+ *      5X -- Error finishing
+ **/ 
 int ds_create_array(){
 
     int error;
     int output=0;
+
     error=ds_init("array.bin");
 
     if(error!=0)
         return error+10;
     
-
     error=ds_malloc(sizeof(elements));
 
     if(error==-1)
@@ -32,16 +43,28 @@ int ds_create_array(){
         return 30;
 
     error=ds_write(0,&output,sizeof(elements));
+    
     if(error==-1)
         return 40;
         
     error=ds_finish();
+    
     if(error!=1)
         return error+50;
+
     return(0);
 }
 
+/**
+ *  Sets global variables
+ * 
+ * Return values:
+ *      0 -- Success
+ *      1X -- Initialization error
+ *      20 -- Error reading
+ **/ 
 int ds_init_array(){
+
     int input;
     int error;
 
@@ -73,11 +96,15 @@ int ds_replace( int value, long index ){
 
     int error;
 
+
     if(index>=MAX_ELEMENTS||index<0)
         return 1;
 
-
+ 
     error=ds_write(get_index_start(index),&value,sizeof(value));
+
+  
+
 
     if(error==-1)
         return 2;
@@ -96,7 +123,6 @@ int ds_replace( int value, long index ){
  *      30 -- Error reading
  *      4X -- Error writing in recurive portion
  *      50 -- Adding past end of array
- *      60 -- Recursive error (should never happen)
  *      
  **/ 
 int ds_insert( int value, long index ){
@@ -110,7 +136,7 @@ int ds_insert( int value, long index ){
         return 10;
     }
 
-    if(elements<=index)
+    if(elements<index)
     {
         /*Cannot add past the array*/
         return 50;
@@ -122,9 +148,12 @@ int ds_insert( int value, long index ){
     /*Base case*/
     if(index==elements)
     {
+
+        
         /*If nothing in index*/
         /*Write value to that location*/
         error=ds_replace(value,index);
+        
         if(error!=0)
             return error+20;
         
@@ -154,7 +183,7 @@ int ds_insert( int value, long index ){
         if(error!=0)
             return error;
     }
-    return 60;
+    return error;
 }
 
 /**
@@ -317,6 +346,14 @@ int ds_read_elements( char *filename ){
 
 }
 
+/**
+ * Writes the header to file
+ * 
+ * Return values:
+ *      0 -- Success
+ *      10 -- Error writing
+ *      20 -- Error finishing
+ **/
 int ds_finish_array(){
     int error;
     
@@ -325,6 +362,7 @@ int ds_finish_array(){
         return 10;
 
     error=ds_finish();
+    
     if(error!=1)
         return error+20;
 
@@ -355,10 +393,13 @@ void* read_int_in_array(void *ptr, long index){
 
 void show_array(){
     int i;
-    ds_init_array();
-    printf("Elements: %ld\n", elements); 
+    int temp;
+    ds_test_init();
+    printf("elements: %ld\n", elements); 
     for(i=0;i<elements;i++)
-    {
-        printf("element");
+    {   
+        read_int_in_array(&temp,i);
+    
+        printf("element [%d] = %d\n",i,temp);
     }
 }

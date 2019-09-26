@@ -259,12 +259,20 @@ int main(void){
 
        ds_finish();*/
    
-       int a,b;
-       a=ds_init_array();
-       show_array();
-       b=ds_finish_array();
-       printf("inti_Array:%d\nfinish_array:%d",a,b);
+       int a,b,c,d,e;
+       a=ds_create("array.bin",2048);
+   
+       b=ds_create_array();
+    
+     c=0;
+     d=0;
+     e=0;
 
+       ds_test_init();
+       printf("a:%d\nb:%d\nc:%d\nd:%d\ne:%d\n",a,b,c,d,e);
+
+
+       
        
        return 0;
 }
