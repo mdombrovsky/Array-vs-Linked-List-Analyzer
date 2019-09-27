@@ -27,7 +27,7 @@ int ds_create( char *filename, long size ){
 
     struct ds_blocks_struct block;
     struct ds_blocks_struct blockArray [MAX_BLOCKS];
-
+    
     char zero=0;
 
     FILE * fptr;
@@ -65,9 +65,12 @@ int ds_create( char *filename, long size ){
         return 2;
     }
 
-    if(fwrite(&zero,sizeof(zero),size,fptr)!=size){
-        /*Error writing files*/
-        return 2;
+    for(i=0;i<size;i++)
+    {
+        if(fwrite(&zero,sizeof(zero),1,fptr)!=1){
+            /*Error writing files*/
+            return 2;
+        }
     }
 
     if(fclose(fptr)!=0)
@@ -246,18 +249,20 @@ long ds_write( long start, void *ptr, long bytes ){
     
     if(start<0)
     {
+        printf("\nHere1\n\n");
         return -1;
     }
 
     if(fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
     {
+        printf("\nHere2\n\n");
         /*Error rewinding file*/
         return -1;
     }
 
     if(fwrite(ptr,bytes,1,ds_file.fp)!=1)
     {
-        
+        printf("\nHere3\n\n");
         /*Error writing file*/
         return -1;
     }
@@ -306,22 +311,10 @@ int ds_finish(){
     return 1;
 }
 
+
 /**
- * Returns if an element has been alloced
- * 
- * Return values:
- *      0 -- Not alloced
- *      1 -- Alloced
- **/
-int is_alloced(long start){
-    int i;
-
-    for(i=0;i<MAX_BLOCKS;i++)
-        if(ds_file.block[i].start==(start+sizeof(ds_file.block)))
-            return (int)ds_file.block[i].alloced;
-    return 1;
-}
-
+ * Prints out memory table
+ **/ 
 void ds_test_init(){
     int i;
     printf("Block #\tstart\tlength\talloced\n");
@@ -331,6 +324,3 @@ void ds_test_init(){
     printf("read = %d\nwrite = %d\n",ds_counts.reads,ds_counts.writes);
 }
 
-void decrease_reads(){
-    ds_counts.reads--;
-}

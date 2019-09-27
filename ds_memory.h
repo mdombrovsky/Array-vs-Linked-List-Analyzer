@@ -33,8 +33,6 @@ void ds_free( long start ) ;
 void *ds_read( void *ptr, long start, long bytes ); 
 long ds_write( long start, void *ptr, long bytes ); 
 int ds_finish();
-int is_alloced(long start);
-void decrease_reads();
 void ds_test_init();
 
 

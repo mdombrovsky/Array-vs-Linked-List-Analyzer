@@ -12,7 +12,7 @@ long elements;
 #define MAX_ELEMENTS 256
 
 /**
- * Allocates space for the array
+ * Creates array
  * 
  * Return values:
  *      0 -- Success
@@ -56,7 +56,7 @@ int ds_create_array(){
 }
 
 /**
- *  Sets global variables
+ * Initializes array
  * 
  * Return values:
  *      0 -- Success
@@ -100,11 +100,7 @@ int ds_replace( int value, long index ){
     if(index>=MAX_ELEMENTS||index<0)
         return 1;
 
- 
-    error=ds_write(get_index_start(index),&value,sizeof(value));
-
-  
-
+    error=ds_write(get_index_start_array(index),&value,sizeof(value));
 
     if(error==-1)
         return 2;
@@ -141,8 +137,6 @@ int ds_insert( int value, long index ){
         /*Cannot add past the array*/
         return 50;
     }
-
-
 
 
     /*Base case*/
@@ -305,7 +299,8 @@ long ds_find( int target ){
 int ds_read_elements( char *filename ){
     FILE *fptr;
     int temp;
-    int error;    
+    int error;
+    int read;    
     /*Opens file*/
     fptr=fopen(filename,"r");
 
@@ -317,10 +312,10 @@ int ds_read_elements( char *filename ){
    
     do{
         /*Reads from file*/
-        error=fscanf(fptr, "%d", &temp);
+        read=fscanf(fptr, "%d", &temp);
 
         /*If one element is read in*/
-        if(error==1){
+        if(read==1){
 
             /*If array is already full*/
             if(elements==MAX_ELEMENTS)
@@ -338,11 +333,9 @@ int ds_read_elements( char *filename ){
             }
         }
 
-    }while(error!=EOF);
+    }while(read!=EOF);
 
     return 0;
-    
-
 
 }
 
@@ -351,20 +344,20 @@ int ds_read_elements( char *filename ){
  * 
  * Return values:
  *      0 -- Success
- *      10 -- Error writing
- *      20 -- Error finishing
+ *      1 -- Error writing
+ *      2 -- Error finishing
  **/
 int ds_finish_array(){
     int error;
     
     error=ds_write(0,&(elements),sizeof(elements));
     if(error==-1)
-        return 10;
+        return 1;
 
     error=ds_finish();
     
     if(error!=1)
-        return error+20;
+        return 2;
 
     return 0;
 }
@@ -376,7 +369,7 @@ int ds_finish_array(){
  *      long -- Correct index with which to call ds_read
  *      
  **/
-long get_index_start(int index){
+long get_index_start_array(int index){
     return sizeof(elements)+(index)*sizeof(int);
 }
 
@@ -388,9 +381,12 @@ long get_index_start(int index){
  *      NULL -- Failure
  **/ 
 void* read_int_in_array(void *ptr, long index){
-    return ds_read(ptr, get_index_start(index),sizeof(int));
+    return ds_read(ptr, get_index_start_array(index),sizeof(int));
 }
 
+/**
+ * Shows contents of the array
+ **/ 
 void show_array(){
     int i;
     int temp;

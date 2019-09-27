@@ -16,6 +16,9 @@ test: ds_memory.o ds_array.o test.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) test.o ds_memory.o ds_array.o -o test
 	./test
 
+create_array: ds_memory.o ds_array.o create_array.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) create_array.o ds_memory.o ds_array.o -o create_array
+
 find_array: ds_memory.o ds_array.o find_array.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) find_array.o ds_memory.o ds_array.o -o find_array
 
@@ -44,6 +47,8 @@ insert_array.o: insert_array.c
 test.o: test.c
 	$(CC) $(CFLAGS) -c test.c -o test.o
 
+create_array.o: create_array.c
+	$(CC) $(CFLAGS) -c create_array.c -o create_array.o
 
 find_array.o: find_array.c
 	$(CC) $(CFLAGS) -c find_array.c -o find_array.o

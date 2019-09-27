@@ -34,11 +34,11 @@ int main( int argc, char**argv )
 
  
 
-  ds_init_array();
+  printf("init: %d\n",ds_init_array());
 
-  ds_insert( value, index );
+  printf("insert: %d\n",ds_insert( value, index ));
 
-  ds_finish_array();
+  printf("finish: %d\n",ds_finish_array());
 
  
 
