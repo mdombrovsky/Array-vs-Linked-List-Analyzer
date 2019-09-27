@@ -16,6 +16,19 @@ test: ds_memory.o ds_array.o test.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) test.o ds_memory.o ds_array.o -o test
 	./test
 
+find_array: ds_memory.o ds_array.o find_array.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) find_array.o ds_memory.o ds_array.o -o find_array
+
+swap_array: ds_memory.o ds_array.o swap_array.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) swap_array.o ds_memory.o ds_array.o -o swap_array
+	
+	
+delete_array: ds_memory.o ds_array.o delete_array.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) delete_array.o ds_memory.o ds_array.o -o delete_array
+
+read_elements: ds_memory.o ds_array.o read_elements.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) read_elements.o ds_memory.o ds_array.o -o read_elements
+
 insert_array: ds_memory.o ds_array.o insert_array.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) insert_array.o ds_memory.o ds_array.o -o insert_array
 
@@ -30,6 +43,20 @@ insert_array.o: insert_array.c
 
 test.o: test.c
 	$(CC) $(CFLAGS) -c test.c -o test.o
+
+
+find_array.o: find_array.c
+	$(CC) $(CFLAGS) -c find_array.c -o find_array.o
+
+swap_array.o: swap_array.c
+	$(CC) $(CFLAGS) -c swap_array.c -o swap_array.o
+
+
+delete_array.o: delete_array.c
+	$(CC) $(CFLAGS) -c delete_array.c -o delete_array.o
+
+read_elements.o: read_elements.c
+	$(CC) $(CFLAGS) -c read_elements.c -o read_elements.o
 
 clean_test: clean
 	rm test

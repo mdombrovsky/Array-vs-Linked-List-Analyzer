@@ -225,7 +225,7 @@ int ds_delete( long index ){
 
     }
 
-    return 30;
+    return error;
 
 }
 
