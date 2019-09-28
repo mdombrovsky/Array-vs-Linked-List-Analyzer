@@ -12,3 +12,5 @@ ds_list.o: ds_list.c ds_list.h
 ds_array.o: ds_array.c ds_array.h
 	$(CC) $(CFLAGS) -c ds_array.c -o ds_array.o
 
+clean:
+	rm *.o
