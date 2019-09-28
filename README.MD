@@ -5,8 +5,10 @@ This is meant to emulate a memory management system, to better understand how me
 
 ## Usage
 
+### Compilation
+
 ```c
-WORK IN PROGRESS
+make all
 ```
 
 ## About
