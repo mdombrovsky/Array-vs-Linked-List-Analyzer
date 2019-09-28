@@ -86,7 +86,7 @@ int ds_replace( int value, long index ){
         if(index!=0)
             return 3;
 
-        error=write_first_node(value,-1);
+        error=write_first_node(value,-1,-1);
         if(error!=0)
             return error+10;
         return 0;
@@ -120,11 +120,13 @@ int ds_replace( int value, long index ){
  *      2 -- Error reading head
  *      3 -- Error list is empty, but index is not 0
  *      4 -- Error changing next value of previous node
+ *      5 -- Error setting head
  *      1X -- Error writing first node
  *      2X -- Error traversing list to previous node
  *      3X -- Error creating new node
  *      4X -- Error getting address of subsequent node
  *      5X -- Error creating new node
+ *      6X -- Error creating new node
  *      
  **/
 int ds_insert( int value, long index ){
@@ -147,11 +149,12 @@ int ds_insert( int value, long index ){
     /*If list is empty*/
     if(head==-1)
     {   
+       
         if(index!=0)
         {
             return 3;
         }
-        error=write_first_node(value,-1);
+        error=write_first_node(value,-1,-1);
         if(error!=0)
         {   
             return error+10;
@@ -159,6 +162,7 @@ int ds_insert( int value, long index ){
 
         return 0;
     }
+    
     /*If list is not empty*/
     else{
 
@@ -167,11 +171,15 @@ int ds_insert( int value, long index ){
             /* Creates new first node 
              * and sets it next to the 
              * previous nodes' address*/
-            error=write_first_node(value,head);
+
+            newAddress=create_node(value,head);
+            if(newAddress<0)
+                return 60+newAddress*(-1);
+
+            error=set_head(newAddress);
             if(error!=0)
-            {   
-                return error+10;
-            }  
+                return 5;
+            
             return 0;
 
         }
@@ -341,7 +349,7 @@ int ds_swap( long index1, long index2 ){
     if(address1<0)
         return 10+address1*(-1);
     
-    address2=traverse_list(&node2,address1,index2-index1);
+    address2=traverse_list(&node2,node1.next,index2-index1-1);
     if(address2<0)
         return 10+address2*(-1);
 
@@ -408,10 +416,13 @@ long ds_find( int target ){
  *      2 -- Error getting head
  *      3 -- Error creating node
  *      4 -- Error setting head
+ *      5 -- Error writing node
  **/
 int ds_read_elements( char *filename ){
+
     FILE *fptr;
     int temp;
+    int oldValue;
     int error;  
     int read; 
     long address;
@@ -419,8 +430,6 @@ int ds_read_elements( char *filename ){
     long head;
     listNode node;
 
-    
-    
     /*Opens file*/
     fptr=fopen(filename,"r");
 
@@ -439,7 +448,12 @@ int ds_read_elements( char *filename ){
     if(head!=-1)
     {
         address=traverse_list(&node,head,-1);
+        oldValue=node.item;
     }
+    else{
+        address=-1;
+    }
+
 
     do{
         /*Reads from file*/
@@ -448,10 +462,12 @@ int ds_read_elements( char *filename ){
         /*If one element is read in*/
         if(read==1)
         {
-            
             newAddress=create_node(temp,-1);
+
+
             if(newAddress<0)
                 return 3;
+   
 
             /*If first element*/
             if(head==-1)
@@ -460,17 +476,22 @@ int ds_read_elements( char *filename ){
                 error=set_head(newAddress);
                 if(error!=0)
                     return 4;
+                    
             }
-            /*If elemnts already present*/
+
+            /*If elements already present*/
             else
             {
+                node.item=oldValue;
                 node.next=newAddress;
+
+                /*Changes last elements next value*/
                 error=write_node(address,node);
                 if(error!=0)
                     return 5;
             }
-
             address=newAddress;
+            oldValue=temp;
 
         }
         
@@ -514,8 +535,6 @@ long traverse_list(listNode *ptr, long address,int traversals){
     int i;
     listNode node;
     long currentAddress;
-    
-
 
     if(address<0)
         return -1;
@@ -531,10 +550,12 @@ long traverse_list(listNode *ptr, long address,int traversals){
             return -2;
         }
 
+        
         /*If right amount of traversals*/
         if(i==traversals||((traversals==-1)&&(node.next==-1)))
         {
-            ptr=&node;
+            
+            *ptr=node;
             return currentAddress;
         }
 
@@ -551,21 +572,18 @@ long traverse_list(listNode *ptr, long address,int traversals){
  * 
  * Return values:
  *      0 -- Success
- *      1 -- Unable to read head
+ *      1 -- Error writing new head
  *      2 -- First node already present
  *      3 -- Error allocating space
  *      4 -- Error writing node
- *      5 -- Error writing new head
+ *     
  **/ 
-int write_first_node(int value, long next){
+int write_first_node(int value, long next, long head){
 
-    long head;
     int error;
     long address;
+         
 
-    error=get_head(&head);
-    if(error!=0)
-        return 1;
 
     /*Checks that there are no nodes*/
     if(head!=-1)
@@ -578,14 +596,14 @@ int write_first_node(int value, long next){
     /*Replaces value of head*/
     error=set_head(address);
     if(error==1)
-        return 5;
+        return 1;
     
     return 0;
 
 }
 
 /**
- * Creates node at specified address
+ * Creates node and return address
  * 
  * Return values: 
  *      Address -- Success
@@ -596,7 +614,7 @@ long create_node(int value, long next){
     int error;
     long address;
     listNode node;
-    
+
     node.item=value;
     node.next=next;
 
@@ -665,4 +683,31 @@ int set_head(long address){
         return 0;
     }
     return 1;
+}
+
+/**
+ * Shows contents of the array
+ **/ 
+void show_list(){
+    long head;
+    long address;
+    listNode node;
+    int count=0;
+    /*long current;*/
+    ds_test_init();
+
+    get_head(&head);
+    printf("\nhead: %ld\n\n",head);
+
+    address=head;
+
+
+    while(address!=-1){
+        traverse_list(&node,address,0);
+        /*printf("item[%d] at %ld, item = %d, next = %ld\n",count,current,node.item,node.next);*/
+        printf("item[%d] = %d\n",count,node.item);
+        address=node.next;
+        count++;
+    }
+    printf("\nitems: %d\n",count);
 }

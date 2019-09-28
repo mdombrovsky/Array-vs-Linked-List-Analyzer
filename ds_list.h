@@ -25,9 +25,10 @@ long ds_find( int target );
 int ds_read_elements( char *filename ); 
 int ds_finish_list(); 
 long traverse_list(listNode *ptr, long address,int traversals);
-int write_first_node(int value, long next);
+int write_first_node(int value, long next, long head);
 long create_node(int value, long next);
 int write_node(long address, listNode node);
 int get_head(void *ptr);
 int set_head(long address);
+void show_list();
 
