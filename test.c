@@ -16,7 +16,7 @@ int main(void){
        b=ds_create_list();
        
        c=ds_init_list();
-   
+       ds_insert(0,0);
        d=ds_read_elements("elements.txt");
        show_list();
        e=ds_finish_list();

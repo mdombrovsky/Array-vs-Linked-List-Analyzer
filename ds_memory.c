@@ -249,20 +249,17 @@ long ds_write( long start, void *ptr, long bytes ){
     
     if(start<0)
     {
-        printf("\nHere1\n\n");
         return -1;
     }
 
     if(fseek(ds_file.fp,start+sizeof(ds_file.block),SEEK_SET)!=0)
     {
-        printf("\nHere2\n\n");
         /*Error rewinding file*/
         return -1;
     }
 
     if(fwrite(ptr,bytes,1,ds_file.fp)!=1)
     {
-        printf("\nHere3\n\n");
         /*Error writing file*/
         return -1;
     }
@@ -324,3 +321,16 @@ void ds_test_init(){
     printf("read = %d\nwrite = %d\n",ds_counts.reads,ds_counts.writes);
 }
 
+/**
+ * Returns the amount of reads
+ **/
+int get_reads(){
+    return ds_counts.reads;
+}
+
+/**
+ * Retuns the amount of writes
+ **/ 
+int get_writes(){
+    return ds_counts.writes;
+}

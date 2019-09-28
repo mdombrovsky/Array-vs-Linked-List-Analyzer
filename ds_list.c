@@ -439,6 +439,8 @@ int ds_read_elements( char *filename ){
         return 1;
     }
    
+   
+  
     /*Gets head*/
     error=get_head(&head);
     if(error<0)
@@ -447,13 +449,15 @@ int ds_read_elements( char *filename ){
     /*Gets last element*/
     if(head!=-1)
     {
+ 
         address=traverse_list(&node,head,-1);
         oldValue=node.item;
+               
+
     }
     else{
         address=-1;
     }
-
 
     do{
         /*Reads from file*/

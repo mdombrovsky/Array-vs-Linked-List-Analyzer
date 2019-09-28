@@ -19,8 +19,14 @@ test: ds_memory.o ds_list.o test.o ds_memory.h ds_list.h
 create_array: ds_memory.o ds_array.o create_array.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) create_array.o ds_memory.o ds_array.o -o create_array
 
+calc_array: ds_memory.o ds_array.o calc_array.o ds_memory.h ds_array.h
+	$(CC) $(CFLAGS) calc_array.o ds_memory.o ds_array.o -o calc_array
+
 create_list: ds_memory.o ds_list.o create_list.o ds_memory.h ds_list.h
 	$(CC) $(CFLAGS) create_list.o ds_memory.o ds_list.o -o create_list
+
+calc_list: ds_memory.o ds_list.o calc_list.o ds_memory.h ds_list.h
+	$(CC) $(CFLAGS) calc_list.o ds_memory.o ds_list.o -o calc_list
 
 insert_list: ds_memory.o ds_list.o insert_list.o ds_memory.h ds_list.h
 	$(CC) $(CFLAGS) insert_list.o ds_memory.o ds_list.o -o insert_list
@@ -49,7 +55,6 @@ find_array: ds_memory.o ds_array.o find_array.o ds_memory.h ds_array.h
 swap_array: ds_memory.o ds_array.o swap_array.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) swap_array.o ds_memory.o ds_array.o -o swap_array
 	
-	
 delete_array: ds_memory.o ds_array.o delete_array.o ds_memory.h ds_array.h
 	$(CC) $(CFLAGS) delete_array.o ds_memory.o ds_array.o -o delete_array
 
@@ -74,9 +79,14 @@ test.o: test.c
 create_array.o: create_array.c
 	$(CC) $(CFLAGS) -c create_array.c -o create_array.o
 
+calc_list.o: calc_list.c
+	$(CC) $(CFLAGS) -c calc_list.c -o calc_list.o
+
 create_list.o: create_list.c
 	$(CC) $(CFLAGS) -c create_list.c -o create_list.o
 
+calc_array.o: calc_array.c
+	$(CC) $(CFLAGS) -c calc_array.c -o calc_array.o
 
 read_list.o: read_list.c
 	$(CC) $(CFLAGS) -c read_list.c -o read_list.o
@@ -112,10 +122,7 @@ delete_array.o: delete_array.c
 read_elements.o: read_elements.c
 	$(CC) $(CFLAGS) -c read_elements.c -o read_elements.o
 
-clean_test: clean
-	rm test
-	rm test.bin
-
 clean:
 	rm *.o
-	rm -i array.bin
+	rm *.bin
+	rm *.txt
