@@ -123,7 +123,6 @@ read_elements.o: read_elements.c
 	$(CC) $(CFLAGS) -c read_elements.c -o read_elements.o
 
 clean:
-	ls | grep -v "\." | xargs rm
 	rm *.o
 	rm *.bin
 	rm *.txt

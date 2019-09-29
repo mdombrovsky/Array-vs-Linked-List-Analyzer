@@ -1,6 +1,7 @@
 /* ds_array.c
  * Name: Michael Dombrovsky
  * Student ID: 1040227
+ * Email: mdombrov@uoguelph.ca
  * Course: CIS*2520
  */
 
